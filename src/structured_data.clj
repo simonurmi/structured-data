@@ -73,7 +73,7 @@
   (map :title books))
 
 (defn monotonic? [a-seq]
-  (apply <= a-seq))
+  (or (apply <= a-seq) (apply >= a-seq)))
 
 (defn stars [n]
   (apply str (repeat n "*")))
@@ -112,21 +112,24 @@
     (str book-name ", written by " authors)))
 
 (defn books->string [books]
-  :-)
+  (let [amount (count books)
+        amount->string (cond
+                        (== 0 amount) "No books"
+                        (== 1 amount) "1 book. "
+                        :else (str amount " books. "))]
+    (str amount->string (apply str (interpose ". " (map book->string books))) ".")))
 
 (defn books-by-author [author books]
-  :-)
+  (filter (fn [book] (has-author? book author)) books))
 
 (defn author-by-name [name authors]
-  :-)
+  (first (filter (fn [author] (= name (:name author))) authors)))
 
 (defn living-authors [authors]
-  :-)
+  (filter (fn [author] (alive? author)) authors))
 
 (defn has-a-living-author? [book]
-  :-)
+  (not (empty? (living-authors (:authors book)))))
 
 (defn books-by-living-authors [books]
-  :-)
-
-; %________%
+  (filter (fn [book] (has-a-living-author? book)) books))
