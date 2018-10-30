@@ -40,12 +40,10 @@
     (and (<= x1 x x2) (<= y1 y y2))))
 
 (defn contains-rectangle? [outer inner]
-  (let [
-    [[outer_x1 outer_y1] [outer_x2 outer_y2]] outer
-    [[inner_x1 inner_y1] [inner_x2 inner_y2]] inner]
+  (let [[[inner_x1 inner_y1] [inner_x2 inner_y2]] inner]
     (and
-      (contains-point? outer (point inner_x1 inner_y1))
-      (contains-point? outer (point inner_x2 inner_y2)))))
+     (contains-point? outer (point inner_x1 inner_y1))
+     (contains-point? outer (point inner_x2 inner_y2)))))
 
 (defn title-length [book]
   (count (:title book)))
@@ -57,9 +55,8 @@
   (< 1 (author-count book)))
 
 (defn add-author [book new-author]
-  (let [
-    authors (:authors book)
-    new-authors (conj authors new-author)]
+  (let [authors (:authors book)
+        new-authors (conj authors new-author)]
     (assoc book :authors new-authors)))
 
 (defn alive? [author]
@@ -85,28 +82,34 @@
   (if (contains? a-set elem) (disj a-set elem) (conj a-set elem)))
 
 (defn contains-duplicates? [a-seq]
-  :-)
+  (not (= (count a-seq) (count (set a-seq)))))
 
 (defn old-book->new-book [book]
-  :-)
+  (assoc book :authors (set (:authors book))))
 
 (defn has-author? [book author]
-  :-)
+  (contains? (:authors book) author))
 
 (defn authors [books]
-  :-)
+  (apply clojure.set/union (map :authors books)))
 
 (defn all-author-names [books]
-  :-)
+  (set (map :name (authors books))))
 
 (defn author->string [author]
-  :-)
+  (let [name (:name author)
+        year (if (contains? author :birth-year)
+               (str " " \( (:birth-year author) " - " (:death-year author) \))
+               "")]
+    (str name year)))
 
 (defn authors->string [authors]
-  :-)
+  (apply str (interpose ", " (map author->string authors))))
 
 (defn book->string [book]
-  :-)
+  (let [book-name (:title book)
+        authors (authors->string (:authors book))]
+    (str book-name ", written by " authors)))
 
 (defn books->string [books]
   :-)
